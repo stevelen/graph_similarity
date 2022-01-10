@@ -7,6 +7,8 @@ import find_clique as fc
 import find_biclique as fb
 import find_starclique as fsc
 import math
+import model as ml
+import merge_structures as merger
 from networkx.algorithms.components.connected import connected_components
 
 
@@ -54,6 +56,29 @@ def decomposition(G, minimum_component_size = 1, neighborhood_size = 1):
         print(f"Vegso komponensek listaja: {components}")
     return components
 
+def beppo(graph, structure_vocab):
+    model = ml.Model()
+    model.nx_graph = graph
+    components = decomposition(graph)
+    for structure in structure_vocab:
+        if structure == "star":
+            fs.generate_star_component_candidates(model, components)
+        if structure == "clique":
+            fc.generate_clique_component_candidates(model, components)
+        if structure == "biclique":
+            fb.generate_biclique_component_candidates(model, components)
+        if structure == "starclique":
+            fs.generate_star_component_candidates(model, components)
+    
+    print(model)
+    merger.merge_similar_cliques(model)
+    merger.merge_similar_structures(model, "biclique", 0.1)
+    merger.merge_similar_structures(model, "starclique", 0.1)
+    print(model)
+
+    return model
+    
+
 def main():
 
     A = np.array([
@@ -68,14 +93,15 @@ def main():
         [1, 1, 0, 1, 0, 1, 0, 0, 0, 0],
         [1, 1, 0, 1, 0, 0, 0, 0, 0, 0]])
     G = nx.from_numpy_matrix(A)
-    #G = nx.erdos_renyi_graph(350, 0.12, 8788235817235, False)
-    G = nx.erdos_renyi_graph(100, 0.12, 8788235817235, False)
+    struct_vocab = ["star", "clique", "biclique", "starclique"]
+    #G = nx.erdos_renyi_graph(500, 0.05, 8788235817235, False)
+    G = nx.erdos_renyi_graph(100, 0.4, 8788235817235, False)
+    #G = nx.erdos_renyi_graph(75, 0.2, 8788235817235, False)
     #nx.draw_circular(G, with_labels = True)
     #plt.show()
     #print(decomposition(G))
-    fsc.find_starclique_from_component([7, 13, 16, 17, 27, 35, 39, 40, 47, 49, 59, 60, 61, 70, 71, 75, 81, 94, 95, 86], G)
-    #fsc.find_starclique_from_component([129, 259, 260, 262, 135, 137, 269, 270, 143, 17, 274, 149, 22, 27, 155, 156, 160, 290, 292, 295, 40, 298, 43, 300, 175, 49, 305, 185, 314, 315, 189, 62, 191, 
-#317, 194, 197, 199, 327, 202, 75, 77, 78, 79, 207, 211, 339, 341, 217, 218, 220, 222, 97, 228, 101, 102, 103, 105, 111, 120, 250, 123, 252, 333], G)
-  
+    #fsc.find_starclique_from_component([7, 13, 16, 17, 27, 35, 39, 40, 47, 49, 59, 60, 61, 70, 71, 75, 81, 94, 95, 86], G)
+    beppo(G, struct_vocab)
+    
 if __name__=="__main__":
     main()
