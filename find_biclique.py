@@ -3,15 +3,18 @@ import matplotlib.pyplot as plt
 import math
 from collections import Counter
 import model as ml
+import structures as st
 
 def generate_biclique_component_candidates(M, components = []):
     for c in components:
-        biclique_nodes, left, right = find_biclique_from_component(c, M.nx_graph)
-        if biclique_nodes != 0:
-            biclique = ml.Biclique()
+        biclique_nx_graph, biclique_nodes, left, right = find_biclique_from_component(c, M.nx_graph)
+        if biclique_nx_graph != 0:
+            biclique = st.Biclique()
             biclique.nodes = biclique_nodes
             biclique.left = left
             biclique.right = right
+            biclique.nx_graph = biclique_nx_graph
+            biclique.number_of_edges = biclique_nx_graph.number_of_edges()
             M.bicliques.append(biclique)
 
 def find_biclique_from_component(component, G):
@@ -57,7 +60,7 @@ def find_biclique_from_component(component, G):
     #print(f"kiinduló left: {left}")
 
     if len(left) < 3 or len(right) < 5:
-        return 0, [], []
+        return 0, 0, [], []
         #return 0
     
     iter_counter = 0
@@ -116,8 +119,8 @@ def find_biclique_from_component(component, G):
 
     if component_Graph.number_of_nodes() < 10 :
         #print("empty")
-        return 0, [], []
+        return 0, 0, [], []
         #return 0
     else:
-        return list(component_Graph.nodes), left, right
+        return component_Graph, list(component_Graph.nodes), left, right
         #return list(component_Graph.nodes)

@@ -3,15 +3,18 @@ import matplotlib.pyplot as plt
 import math
 from collections import Counter
 import model as ml
+import structures as st
 
 def generate_starclique_component_candidates(M, components = []):
     for c in components:
-        starclique_nodes, left, right = find_starclique_from_component(c, M.nx_graph)
-        if starclique_nodes != 0:
-            starclique = ml.Starclique()
+        starclique_nx_graph, starclique_nodes, left, right = find_starclique_from_component(c, M.nx_graph)
+        if starclique_nx_graph != 0:
+            starclique = st.Starclique()
             starclique.nodes = starclique_nodes
             starclique.left = left
             starclique.right = right
+            starclique.nx_graph = starclique_nx_graph
+            starclique.number_of_edges = starclique_nx_graph.number_of_edges()
             M.starcliques.append(starclique)
 
 def find_starclique_from_component(component, G):
@@ -102,9 +105,9 @@ def find_starclique_from_component(component, G):
 
     if component_Graph.number_of_nodes() < 10 or len(left) < 3 or len(right) < 3 :
         #print("empty")
-        return 0, [], []
+        return 0, 0, [], []
         #return 0
     else:
-        return list(component_Graph.nodes), left, right
+        return component_Graph, list(component_Graph.nodes), left, right
         #return list(component_Graph.nodes)
         

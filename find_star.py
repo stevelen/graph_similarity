@@ -1,11 +1,17 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import math
+import structures as st
 
 def generate_star_component_candidates(M, components = []):
     for c in components:
-        star = find_star_from_component(c, M.nx_graph)
-        if star != 0:
+        star_nx_graph, star_nodes, star_hub = find_star_from_component(c, M.nx_graph)
+        if star_nx_graph != 0:
+            star = st.Star()
+            star.nodes = star_nodes
+            star.hub = star_hub
+            star.nx_graph = star_nx_graph
+            star.number_of_edges = star_nx_graph.number_of_edges()
             M.stars.append(star)
 
 def find_star_from_component(component, G):
@@ -14,7 +20,7 @@ def find_star_from_component(component, G):
     
     if top_nodes[0][1] == top_nodes[1][1]:
         #return 0, [], 0
-        return 0
+        return 0, [], 0
     else:
         new_hub = top_nodes[0][0]
         subgraph = list(nx.descendants_at_distance(G, new_hub, 1))
@@ -57,11 +63,11 @@ def find_star_from_component(component, G):
             #plt.show() 
         if sub_G.number_of_nodes() < 10:
             #return 0, [], 0
-            return 0
+            return 0, [], 0
         else:
             #nx.draw_circular(sub_G, with_labels = True)
             #plt.show() 
             return_nodes = list(nodes_original)
             return_nodes.remove(new_hub)
             #return sub_G, return_nodes, new_hub
-            return list(sub_G.nodes)
+            return sub_G, list(sub_G.nodes), new_hub

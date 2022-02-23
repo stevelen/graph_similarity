@@ -2,12 +2,16 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import math
 from collections import Counter
-
+import structures as st
 
 def generate_clique_component_candidates(M, components = []):
     for c in components:
-        clique = find_clique_from_component(c, M.nx_graph)
-        if clique != 0:
+        clique_graph, clique_nodes = find_clique_from_component(c, M.nx_graph)
+        if clique_graph != 0:
+            clique = st.Clique()
+            clique.nodes = clique_nodes
+            clique.nx_graph = clique_graph
+            clique.number_of_edges = clique_graph.number_of_edges()
             M.cliques.append(clique)
 
 
@@ -50,10 +54,10 @@ def find_clique_from_component(component, G, min_connectivity_fraction = 0.5):
 
     if component_Graph.number_of_nodes() < 10:
             #return 0, []
-            return 0
+            return 0, []
     else:
         #nx.draw_circular(component_Graph, with_labels = True)
         #plt.show() 
         return_nodes = list(nodes_original)
         #return component_Graph, return_nodes
-        return list(component_Graph.nodes)
+        return component_Graph, list(component_Graph.nodes)

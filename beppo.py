@@ -8,6 +8,7 @@ import find_biclique as fb
 import find_starclique as fsc
 import math
 import model as ml
+import structures as st
 import merge_structures as merger
 from networkx.algorithms.components.connected import connected_components
 
@@ -68,12 +69,26 @@ def beppo(graph, structure_vocab):
         if structure == "biclique":
             fb.generate_biclique_component_candidates(model, components)
         if structure == "starclique":
-            fs.generate_star_component_candidates(model, components)
+            fsc.generate_starclique_component_candidates(model, components)
     
     print(model)
     merger.merge_similar_cliques(model)
-    merger.merge_similar_structures(model, "biclique", 0.1)
-    merger.merge_similar_structures(model, "starclique", 0.1)
+    merger.merge_similar_structures(model, "biclique")
+    merger.merge_similar_structures(model, "starclique")
+    print(model)
+
+    for star in model.stars:
+        model.structures.append(star)
+    for clique in model.cliques:
+        model.structures.append(clique)
+    for biclique in model.bicliques:
+        model.structures.append(biclique)
+    for starclique in model.starcliques:
+        model.structures.append(starclique)
+
+    model.structures = sorted(model.structures, key=lambda x: (len(x.nodes), x.number_of_edges), reverse=True)
+
+
     print(model)
 
     return model
