@@ -14,7 +14,7 @@ import choose_from_candidates as cfc
 from networkx.algorithms.components.connected import connected_components
 
 
-def decomposition(G, minimum_component_size = 1, neighborhood_size = 1):
+def decomposition(G, minimum_component_size = 10, neighborhood_size = 1):
     components = []
     slashed = []
     G_copy = G.copy()
@@ -60,7 +60,10 @@ def decomposition(G, minimum_component_size = 1, neighborhood_size = 1):
 def beppo(graph, structure_vocab):
     model = ml.Model(graph, [], [], [], [], [])
     #model.nx_graph = graph
+    nx.draw_circular(graph, with_labels = True)
+    plt.show()
     components = decomposition(graph)
+    print(components)
     for structure in structure_vocab:
         if structure == "star":
             fs.generate_star_component_candidates(model, components)
@@ -87,11 +90,11 @@ def beppo(graph, structure_vocab):
         model.structures.append(starclique)
 
     print(model)
-    #model = cfc.choose_stuctures(model)
+    model = cfc.choose_stuctures(model)
     print(model)
-    for structure in model.structures:
-        nx.draw_circular(structure.nx_graph, with_labels = True)
-        plt.show()
+    #for structure in model.structures:
+    #    nx.draw_circular(structure.nx_graph, with_labels = True)
+    #    plt.show()
     return model
     
 
@@ -110,7 +113,7 @@ def main():
         [1, 1, 0, 1, 0, 0, 0, 0, 0, 0]])
     #G = nx.from_numpy_matrix(A)
     struct_vocab = ["star", "clique", "biclique", "starclique"]
-    G = nx.erdos_renyi_graph(251, 0.05, 8788235817235, False)
+    G = nx.erdos_renyi_graph(1000, 0.05, 8788235817235, False)
     #G = nx.erdos_renyi_graph(100, 0.4, 8788235817235, False)
     #G = nx.erdos_renyi_graph(50, 0.2, 8788235817235, False)
     #nx.draw_circular(G, with_labels = True)
