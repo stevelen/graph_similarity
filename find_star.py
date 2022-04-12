@@ -19,16 +19,15 @@ def find_star_from_component(component, G):
     top_nodes = sorted(component_Graph.degree, key=lambda x: x[1], reverse=True)
     
     if top_nodes[0][1] == top_nodes[1][1]:
-        #return 0, [], 0
         return 0, [], 0
     else:
-        new_hub = top_nodes[0][0]
-        subgraph = list(nx.descendants_at_distance(G, new_hub, 1))
-        subgraph.append(new_hub)
-        sub_G = G.subgraph(subgraph)
+        hub = top_nodes[0][0]
+        subgraph = list(nx.descendants_at_distance(component_Graph, hub, 1)) 
+        subgraph.append(hub)
+        sub_G = G.subgraph(subgraph) # részgráf a komponensben a legnagyobb fokszámú csúccsal és annak szomszédjaival
         #nx.draw_circular(sub_G, with_labels = True)
         #plt.show()   
-        nodes_original = sub_G.nodes()
+        nodes = sub_G.nodes()
         n_spokes = sub_G.number_of_nodes() - 1
         fraction = 0.1
         candidates = sorted(list(filter(lambda x: n_spokes - 1 > x[1]-1 and x[1]-1 > 0.05* n_spokes, list(sub_G.degree()))), key = lambda x: x[1], reverse=True)
@@ -44,12 +43,12 @@ def find_star_from_component(component, G):
         while len(nodes_to_cut) > 0 and sub_G.number_of_nodes() >= 10:
             #print("----------")
             #print(f"nodes_to_cut: {nodes_to_cut}")
-            #print(f"nodes_original: {nodes_original}")
+            #print(f"nodes: {nodes}")
             
-            nodes_to_keep = list(filter(lambda x: x not in nodes_to_cut, nodes_original))
+            nodes_to_keep = list(filter(lambda x: x not in nodes_to_cut, nodes))
             #print(f"nodes_to_keep: {nodes_to_keep}")
             sub_G = G.subgraph(nodes_to_keep)
-            nodes_original = sub_G.nodes()
+            nodes = sub_G.nodes()
             n_spokes = sub_G.number_of_nodes() - 1
             fraction = min(fraction + 0.01, 1.0)
             candidates = sorted(list(filter(lambda x: n_spokes - 1 > x[1]-1 and x[1]-1 > 0.05* n_spokes, list(sub_G.degree()))), key = lambda x: x[1], reverse=True)
@@ -67,7 +66,7 @@ def find_star_from_component(component, G):
         else:
             #nx.draw_circular(sub_G, with_labels = True)
             #plt.show() 
-            return_nodes = list(nodes_original)
-            return_nodes.remove(new_hub)
-            #return sub_G, return_nodes, new_hub
-            return sub_G, list(sub_G.nodes), new_hub
+            return_nodes = list(nodes)
+            return_nodes.remove(hub)
+            #return sub_G, return_nodes, hub
+            return sub_G, list(sub_G.nodes), hub

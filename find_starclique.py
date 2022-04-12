@@ -42,6 +42,8 @@ def find_starclique_from_component(component, G):
     right_candidates = list(filter(lambda x: x[1] >= min_inter_connectivity * len(left) and x[0] not in left, neighbor_map))
     right_candidates = list(x[0] for x in right_candidates)
     right_Graph = G.subgraph(right_candidates)
+    if right_candidates == []:
+        return 0, 0, [], []
     right = nx.maximal_independent_set(right_Graph, seed=1234)
     right = sorted(right, key=lambda x: G.degree[x], reverse=True)
     #print(f"kiinduló right: {right}")
