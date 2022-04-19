@@ -1,5 +1,3 @@
-from math import floor
-
 class Biclique:
 
     nx_graph = None

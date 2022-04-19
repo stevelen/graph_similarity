@@ -23,9 +23,10 @@ def choose_stuctures(model):
             nodes_already_used.extend(structure.nodes)
         
     left_out_nodes = list(set(list(model.nx_graph.nodes)) - set(nodes_already_used)) + list(set(nodes_already_used) - set(list(model.nx_graph.nodes)))
+    #print(left_out_nodes)
     
     for structure in model.structures:
-        if len(list(set(left_out_nodes) & set(structure.nodes))) > len(structure.nodes) * 0.4:
+        if len(list(set(left_out_nodes) & set(structure.nodes))) > len(structure.nodes) * 0.8:
             if isinstance(structure, st.Biclique):
                 final_model.bicliques.append(structure)
             if isinstance(structure, st.Clique):
@@ -35,7 +36,9 @@ def choose_stuctures(model):
             if isinstance(structure, st.Star):
                 final_model.stars.append(structure)
             final_model.structures.append(structure)
-            #print("extra structure added")
+            left_out_nodes = [x for x in left_out_nodes if x not in structure.nodes]
+            print("extra structure added")
+            print(left_out_nodes)
     print(f" number of left out nodes: {len(list(set(list(model.nx_graph.nodes)) - set(nodes_already_used)) + list(set(nodes_already_used) - set(list(model.nx_graph.nodes))))}")
     return final_model
             

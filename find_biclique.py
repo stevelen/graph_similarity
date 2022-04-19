@@ -1,8 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-import math
 from collections import Counter
-import model as ml
 import structures as st
 
 def generate_biclique_component_candidates(M, components = []):

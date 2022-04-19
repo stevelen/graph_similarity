@@ -1,5 +1,3 @@
-import networkx as nx
-
 class Model:
     
     nx_graph = None
