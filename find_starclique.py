@@ -21,17 +21,10 @@ def find_starclique_from_component(component, G):
     min_intra_connectivity = 0.5
     min_inter_connectivity = 0.5
     component_Graph = G.subgraph(component)
-    #print("paraméterben kapott komponens gráf")
-    #nx.draw_circular(component_Graph, with_labels = True)
-    #plt.show()
 
     largest_clique = nx.algorithms.approximation.max_clique(component_Graph)
     left = list(largest_clique)
-    #print(f"kiinduló left: {left}")
     component_Graph = G.subgraph(left)
-    #print("kiinduló left gráf")
-    #nx.draw_circular(component_Graph, with_labels = True)
-    #plt.show()
 
     neighbors_list = []
     for x in left:
@@ -44,7 +37,6 @@ def find_starclique_from_component(component, G):
         return 0, 0, [], []
     right = nx.maximal_independent_set(right_Graph, seed=1234)
     right = sorted(right, key=lambda x: G.degree[x], reverse=True)
-    #print(f"kiinduló right: {right}")
 
     iter_counter = 0
     while True:
@@ -60,9 +52,6 @@ def find_starclique_from_component(component, G):
             for x in sorted(added_left, key=lambda x: x[1], reverse=True):
                 added_left_sorted_list.append(x[0])   
             left.append(added_left_sorted_list[0])
-            #print(f"{iter_counter}. iterációban új csúcs leftben: {added_left_sorted_list[0]}")
-        #else:
-            #print(f"{iter_counter}. iterációban nincs új csúcs leftben")
         
         neighbors_list = []
         for x in left:
@@ -75,21 +64,12 @@ def find_starclique_from_component(component, G):
             for x in sorted(added_right, key=lambda x: x[1], reverse=True):
                 added_right_sorted_list.append(x[0])   
             right.append(added_right_sorted_list[0])
-            #print(f"{iter_counter}. iterációban új csúcs rightban: {added_right_sorted_list[0]}")
-        #else:
-            #print(f"{iter_counter}. iterációban nincs új csúcs rightban")
         if len(added_left) == 0 and len(added_right) == 0:
             break
         iter_counter+=1
     
-    #print(f"végső right: {right}")
-    #print(f"végső left: {left}")
     left_right_union = list(set(left) | set(right))
-    #print(f"left-right unió: {left_right_union}")
     component_Graph = G.subgraph(left_right_union)
-    #print("left-right unió gráf")
-    #nx.draw_circular(component_Graph, with_labels = True)
-    #plt.show()
 
     isolates = []
     for node in left_right_union:
@@ -99,15 +79,9 @@ def find_starclique_from_component(component, G):
     right = list(set(right).difference(set(isolates)))
     left_right_union = list(set(left) | set(right))
     component_Graph = G.subgraph(left_right_union)
-    #print("végső gráf (starclique)")
-    #nx.draw_circular(component_Graph, with_labels = True)
-    #plt.show()
 
     if component_Graph.number_of_nodes() < 10 or len(left) < 3 or len(right) < 3 :
-        #print("empty")
         return 0, 0, [], []
-        #return 0
     else:
         return component_Graph, list(component_Graph.nodes), left, right
-        #return list(component_Graph.nodes)
         

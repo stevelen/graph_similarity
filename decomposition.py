@@ -2,16 +2,13 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import config
 
-def decomposition(G, minimum_component_size = 10, neighborhood_size = 1):
+def decomposition(G, minimum_component_size = 1, neighborhood_size = 1):
     components = []
     slashed = []
     G_copy = G.copy()
 
-    #connected_components = sorted(nx.connected_components(G_copy), key=len, reverse=True)
-    #largest_connected_component = list(connected_components[0])
     largest_connected_component = max(nx.connected_components(G_copy), key=len)
     lccG = G_copy.subgraph(largest_connected_component)
-    #print(lccG.degree)
     largest_degree = sorted(lccG.degree, key=lambda x: x[1], reverse=True)[0][1]
     if config.DEBUG:
         print(f"Legnagyobb osszefuggo komponens: {largest_connected_component}")
@@ -25,10 +22,10 @@ def decomposition(G, minimum_component_size = 10, neighborhood_size = 1):
         hub_neighbors = list(nx.descendants_at_distance(G_copy, new_hub, neighborhood_size))
         hub_neighbors.append(new_hub)
         components.append(hub_neighbors)
+        comp = G.subgraph(hub_neighbors)
+
         ebunch = list(G.edges(new_hub))
         G_copy.remove_edges_from(ebunch)
-        #connected_components = sorted(nx.connected_components(G_copy), key=len, reverse=True)
-        #largest_connected_component = list(connected_components[0])
         largest_connected_component = max(nx.connected_components(G_copy), key=len)
         lccG = G_copy.subgraph(largest_connected_component)
         largest_degree = sorted(lccG.degree, key=lambda x: x[1], reverse=True)[0][1]

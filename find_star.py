@@ -24,9 +24,7 @@ def find_star_from_component(component, G):
         hub = top_nodes[0][0]
         subgraph = list(nx.descendants_at_distance(component_Graph, hub, 1)) 
         subgraph.append(hub)
-        sub_G = G.subgraph(subgraph) # részgráf a komponensben a legnagyobb fokszámú csúccsal és annak szomszédjaival
-        #nx.draw_circular(sub_G, with_labels = True)
-        #plt.show()   
+        sub_G = G.subgraph(subgraph)
         nodes = sub_G.nodes()
         n_spokes = sub_G.number_of_nodes() - 1
         fraction = 0.1
@@ -35,18 +33,11 @@ def find_star_from_component(component, G):
         for x in candidates:
             temp.append(x[0])
         candidates = temp
-        #print(f"candidates: {candidates}")
         cut_point = math.ceil(fraction * len(candidates))
         nodes_to_cut = candidates[:cut_point]
-        #print(len(nodes_to_cut))
-        #print(sub_G.number_of_nodes())
         while len(nodes_to_cut) > 0 and sub_G.number_of_nodes() >= 10:
-            #print("----------")
-            #print(f"nodes_to_cut: {nodes_to_cut}")
-            #print(f"nodes: {nodes}")
             
             nodes_to_keep = list(filter(lambda x: x not in nodes_to_cut, nodes))
-            #print(f"nodes_to_keep: {nodes_to_keep}")
             sub_G = G.subgraph(nodes_to_keep)
             nodes = sub_G.nodes()
             n_spokes = sub_G.number_of_nodes() - 1
@@ -58,15 +49,9 @@ def find_star_from_component(component, G):
             candidates = temp
             cut_point = math.ceil(fraction * len(candidates))
             nodes_to_cut = candidates[:cut_point]
-            #nx.draw_circular(sub_G, with_labels = True)
-            #plt.show() 
         if sub_G.number_of_nodes() < 10:
-            #return 0, [], 0
             return 0, [], 0
         else:
-            #nx.draw_circular(sub_G, with_labels = True)
-            #plt.show() 
             return_nodes = list(nodes)
             return_nodes.remove(hub)
-            #return sub_G, return_nodes, hub
             return sub_G, list(sub_G.nodes), hub

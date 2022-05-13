@@ -8,7 +8,6 @@ def choose_stuctures(model):
     
     for structure in model.structures:
         if len(list(set(nodes_already_used) & set(structure.nodes))) > len(structure.nodes) * 0.6:
-            #print(list(set(nodes_already_used) & set(structure.nodes)))
             pass
         else:
             if isinstance(structure, st.Biclique):
@@ -23,7 +22,6 @@ def choose_stuctures(model):
             nodes_already_used.extend(structure.nodes)
         
     left_out_nodes = list(set(list(model.nx_graph.nodes)) - set(nodes_already_used)) + list(set(nodes_already_used) - set(list(model.nx_graph.nodes)))
-    #print(left_out_nodes)
     
     for structure in model.structures:
         if len(list(set(left_out_nodes) & set(structure.nodes))) > len(structure.nodes) * 0.8:
